@@ -1,0 +1,122 @@
+---
+title: "Polynomial Regression"
+output: html_notebook
+---
+
+
+```{r}
+library(readr)
+data <- read_csv("Position_Salaries.csv")
+View(data)
+```
+
+
+```{r}
+data= data[2:3]
+
+```
+
+
+```{r}
+data
+```
+
+# Lineer Regression
+
+```{r}
+# Fitting Linear Regression to the dataset
+lin_reg = lm(formula = Salary ~ .,
+             data = data)
+```
+
+
+```{r}
+# Fitting Polynomial Regression to the dataset
+data$Level2 = data$Level^2
+data$Level3 = data$Level^3
+data$Level4 = data$Level^4
+poly_reg = lm(formula = Salary ~ .,
+              data = data)
+```
+
+
+```{r}
+# Visualising the Linear Regression results
+# install.packages('ggplot2')
+library(ggplot2)
+ggplot() +
+  geom_point(aes(x = data$Level, y = data$Salary),
+             colour = 'red') +
+  geom_line(aes(x = data$Level, y = predict(lin_reg, newdata = data)),
+            colour = 'blue') +
+  ggtitle('Truth or Bluff (Linear Regression)') +
+  xlab('Level') +
+  ylab('Salary')
+```
+
+# Fitting and visualising the Polynomial Regression
+```{r}
+# Fitting Polynomial Regression to the dataset
+data$Level2 = data$Level^2
+data$Level3 = data$Level^3
+data$Level4 = data$Level^4
+poly_reg = lm(formula = Salary ~ .,
+              data = data)
+
+```
+
+```{r}
+# Visualising the Polynomial Regression results
+# install.packages('ggplot2')
+library(ggplot2)
+ggplot() +
+  geom_point(aes(x = data$Level, y = data$Salary),
+             colour = 'red') +
+  geom_line(aes(x = data$Level, y = predict(poly_reg, newdata = data)),
+            colour = 'blue') +
+  ggtitle('Truth or Bluff (Polynomial Regression)') +
+  xlab('Level') +
+  ylab('Salary')
+```
+
+
+```{r}
+# Visualising the Regression Model results (for higher resolution and smoother curve)
+# install.packages('ggplot2')
+library(ggplot2)
+x_grid = seq(min(data$Level), max(data$Level), 0.1)
+ggplot() +
+  geom_point(aes(x = data$Level, y = data$Salary),
+             colour = 'red') +
+  geom_line(aes(x = x_grid, y = predict(poly_reg,
+                                        newdata = data.frame(Level = x_grid,
+                                                             Level2 = x_grid^2,
+                                                             Level3 = x_grid^3,
+                                                             Level4 = x_grid^4))),
+            colour = 'blue') +
+  ggtitle('Truth or Bluff (Polynomial Regression)') +
+  xlab('Level') +
+  ylab('Salary')
+```
+
+
+
+```{r}
+# Predicting a new result with Polynomial Regression
+predict(poly_reg, data.frame(Level = 7.5,
+                             Level2 = 7.5^2,
+                             Level3 = 7.5^3,
+                             Level4 = 7.5^4))
+```
+
+
+```{r}
+# Predicting a new result with Linear Regression
+predict(lin_reg, data.frame(Level = 7.5))
+```
+
+From the graphs and results above we can see the relationship between the position of employees and their salaries.So, a polynomial regression fits better.As the degrees increases the curve fits much better on the data. 
+
+We can conclude that the most accurate polynomial is of degree 4 and we can also say that the employee was bluffing. From our predictions an employee of level 7.5 from his previous place of work is paid about 225k, so he lied when he claimed his salary was 250K per year.
+
+
